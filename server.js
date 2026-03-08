@@ -196,7 +196,7 @@ async function generateCharacterParts(username) {
     const buffer = await partImage.getBufferAsync(Jimp.MIME_PNG);
 
     console.log(`[uploading] ${partName} to Mineskin...`);
-    const textureValue = await uploadToMineskin(buffer, partName);
+    const textureValue = await uploadToMineskin(buffer, partName, uuid);
 
     result.parts[partName] = {
       textureValue,
