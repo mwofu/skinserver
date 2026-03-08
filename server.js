@@ -150,6 +150,7 @@ async function uploadToMineskin(imageBuffer, partName) {
     headers: {
       ...form.getHeaders(),
       "User-Agent": "DiamondFireSkinServer/1.0",
+      "Authorization": "Bearer msk_lzp5Zx7f_AjjZhAIAtLy18DnJ428PxsplQlzo2M5izHymkwk9OFtp5TGneiX79mKjjStPUz4u",
     },
     timeout: 30000,
   });
