@@ -139,18 +139,27 @@ async function extractPart(skin, partName) {
  * Upload a skin image buffer to Mineskin and return the texture value string.
  * Mineskin free tier has rate limits — we cache aggressively to avoid hitting them.
  */
-async function uploadToMineskin(imageBuffer, partName, uuid) {
-  // Store the buffer in memory so we can serve it
-  skinPartCache[`${uuid}_${partName}`] = imageBuffer;
-  
-  // Construct a texture value pointing to our own server
-  const url = `${process.env.SERVER_URL}/part/${uuid}/${partName}.png`;
-  const textureJson = JSON.stringify({
-    textures: {
-      SKIN: { url }
-    }
+async function uploadToMineskin(imageBuffer, partName) {
+  const form = new FormData();
+  form.append("file", imageBuffer, {
+    filename: `${partName}.png`,
+    contentType: "image/png",
   });
-  return Buffer.from(textureJson).toString("base64");
+
+  const res = await axios.post("https://api.mineskin.org/v2/generate", form, {
+    headers: {
+      ...form.getHeaders(),
+      "User-Agent": "DiamondFireSkinServer/1.0",
+      "Authorization": `Bearer ${process.env.MINESKIN_API_KEY}`,
+    },
+    timeout: 30000,
+  });
+
+  if (!res.data?.skin?.texture?.value) {
+    throw new Error(`Mineskin upload failed for ${partName}: ${JSON.stringify(res.data)}`);
+  }
+
+  return res.data.skin.texture.value;
 }
 
 // ─── Main generation function ─────────────────────────────────────────────────
