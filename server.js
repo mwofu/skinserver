@@ -150,7 +150,7 @@ async function uploadToMineskin(imageBuffer, partName) {
     const res = await axios.post("https://api.mineskin.org/v2/generate", form, {
       headers: {
         ...form.getHeaders(),
-        "User-Agent": "DiamondFireSkinServer/1.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Authorization": `Bearer ${process.env.MINESKIN_API_KEY}`,
       },
       timeout: 30000,
