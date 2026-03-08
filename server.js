@@ -6,6 +6,7 @@ const NodeCache = require("node-cache");
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 3600 }); // cache results for 1 hour
+const skinPartCache = {};
 
 app.use(express.json());
 app.use(express.text());
@@ -138,28 +139,18 @@ async function extractPart(skin, partName) {
  * Upload a skin image buffer to Mineskin and return the texture value string.
  * Mineskin free tier has rate limits — we cache aggressively to avoid hitting them.
  */
-async function uploadToMineskin(imageBuffer, partName) {
-  const form = new FormData();
-  form.append("file", imageBuffer, {
-    filename: `${partName}.png`,
-    contentType: "image/png",
+async function uploadToMineskin(imageBuffer, partName, uuid) {
+  // Store the buffer in memory so we can serve it
+  skinPartCache[`${uuid}_${partName}`] = imageBuffer;
+  
+  // Construct a texture value pointing to our own server
+  const url = `${process.env.SERVER_URL}/part/${uuid}/${partName}.png`;
+  const textureJson = JSON.stringify({
+    textures: {
+      SKIN: { url }
+    }
   });
-  form.append("visibility", "1"); // unlisted
-
-  const res = await axios.post("https://api.mineskin.org/generate/upload", form, {
-    headers: {
-      ...form.getHeaders(),
-      "User-Agent": "DiamondFireSkinServer/1.0",
-      "Authorization": "Bearer msk_lzp5Zx7f_AjjZhAIAtLy18DnJ428PxsplQlzo2M5izHymkwk9OFtp5TGneiX79mKjjStPUz4u",
-    },
-    timeout: 30000,
-  });
-
-  if (!res.data?.data?.texture?.value) {
-    throw new Error(`Mineskin upload failed for ${partName}: ${JSON.stringify(res.data)}`);
-  }
-
-  return res.data.data.texture.value;
+  return Buffer.from(textureJson).toString("base64");
 }
 
 // ─── Main generation function ─────────────────────────────────────────────────
@@ -227,6 +218,14 @@ async function generateCharacterParts(username) {
 }
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
+
+app.get("/part/:uuid/:part", (req, res) => {
+  const key = `${req.params.uuid}_${req.params.part.replace(".png", "")}`;
+  const buffer = skinPartCache[key];
+  if (!buffer) return res.status(404).send("Not found");
+  res.set("Content-Type", "image/png");
+  res.send(buffer);
+});
 
 // Main endpoint — called by DiamondFire's Get Web Response block
 // POST /skin with body: {"username": "Notch"}
