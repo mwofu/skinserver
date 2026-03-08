@@ -311,6 +311,22 @@ const SCALE = {
   lleg_bot:  [2, 2, 2],
 };
 
+// Offset info for reconstruction
+
+const OFFSETS = {
+  head:      [0,      1.5,   0],
+  torso_top: [0,      0.75,  0],
+  torso_bot: [0,      0.375, 0], // half height so center is at 0.375
+  rarm_top:  [0.375,  0.75,  0], // 0.25 torso half + 0.125 arm half = 0.375
+  rarm_bot:  [0.375,  0.375, 0],
+  larm_top:  [-0.375, 0.75,  0],
+  larm_bot:  [-0.375, 0.375, 0],
+  rleg_top:  [0.125,  0.375, 0],
+  rleg_bot:  [0.125,  0.1875,0],
+  lleg_top:  [-0.125, 0.375, 0],
+  lleg_bot:  [-0.125, 0.1875,0],
+};
+
 // ─── Mojang API helpers ───────────────────────────────────────────────────────
 
 async function getUUID(username) {
@@ -501,6 +517,9 @@ async function generateCharacterParts(username) {
       scaleX: SCALE[partName][0],
       scaleY: SCALE[partName][1],
       scaleZ: SCALE[partName][2],
+      offsetX: OFFSETS[partName][0],
+      offsetY: OFFSETS[partName][1],
+      offsetZ: OFFSETS[partName][2],
     };
 
     console.log(`[done] ${partName}`);
