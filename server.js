@@ -343,30 +343,10 @@ async function downloadSkin(url) {
 function normalizeSlimArms(skin) {
   const padded = skin.clone();
 
-  // Slim arms are 3px wide. Pad to 4px by adding a black column on the right.
-  // We need to pad all face columns for both base and overlay layers.
-  // Right arm base: x=40..55, y=16..32 (top/faces/bottom block)
-  // Left arm base:  x=32..47, y=48..64
-  // Right arm overlay: x=40..55, y=32..48
-  // Left arm overlay:  x=48..63, y=48..64
-
-  const regionsToShift = [
-    // [startX of 3px region, startY, height of region, which column to insert after]
-    // Right arm base faces: columns 40,44,48,52 are starts of 3px faces
-    { faces: [[40,20,3,12],[44,20,3,12],[48,20,3,12],[52,20,3,12]], topY: 16, topH: 4, botY: 32, botH: 4 },
-    // Right arm overlay faces
-    { faces: [[40,36,3,12],[44,36,3,12],[48,36,3,12],[52,36,3,12]], topY: 32, topH: 4, botY: 44, botH: 4 },
-    // Left arm base faces
-    { faces: [[32,52,3,12],[36,52,3,12],[40,52,3,12],[44,52,3,12]], topY: 48, topH: 4, botY: 60, botH: 4 },
-    // Left arm overlay faces
-    { faces: [[48,52,3,12],[52,52,3,12],[56,52,3,12],[60,52,3,12]], topY: 48, topH: 4, botY: 60, botH: 4 },
-  ];
-
-  // Simpler approach: just fill the 4th pixel column of each 3px face with black
   const slimFaceColumns = [
     // right arm base
     [43, 20, 12], [47, 20, 12], [51, 20, 12], [55, 20, 12],
-    [43, 16, 4],  [47, 16, 4],  // top/bottom of right arm base
+    [43, 16, 4],  [47, 16, 4],
     // right arm overlay
     [43, 36, 12], [47, 36, 12], [51, 36, 12], [55, 36, 12],
     [43, 32, 4],  [47, 32, 4],
@@ -380,7 +360,9 @@ function normalizeSlimArms(skin) {
 
   for (const [x, y, h] of slimFaceColumns) {
     for (let row = y; row < y + h; row++) {
-      padded.setPixelColor(0x000000ff, x, row);
+      // Read the pixel one column to the left (the edge of the 3px face)
+      const edgeColor = padded.getPixelColor(x - 1, row);
+      padded.setPixelColor(edgeColor, x, row);
     }
   }
 
