@@ -222,7 +222,7 @@ async function generateCharacterParts(username) {
     console.log(`[done] ${partName}`);
 
     // Small delay between Mineskin uploads to respect rate limits
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 3500));
   }
 
   // 6. Store in cache
