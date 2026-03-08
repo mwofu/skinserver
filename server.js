@@ -298,17 +298,17 @@ const HEAD_FACE_POSITIONS = {
 
 // Scale info for DiamondFire reconstruction (how much to shrink the head in-game)
 const SCALE = {
-  head:      [1, 1],
-  torso_top: [1, 1],
-  torso_bot: [1, 2],
-  rarm_top:  [2, 1],
-  rarm_bot:  [2, 2],
-  larm_top:  [2, 1],
-  larm_bot:  [2, 2],
-  rleg_top:  [2, 1],
-  rleg_bot:  [2, 2],
-  lleg_top:  [2, 1],
-  lleg_bot:  [2, 2],
+  head:      [1, 1, 1],
+  torso_top: [1, 1, 2],
+  torso_bot: [1, 2, 2],
+  rarm_top:  [2, 1, 2],
+  rarm_bot:  [2, 2, 2],
+  larm_top:  [2, 1, 2],
+  larm_bot:  [2, 2, 2],
+  rleg_top:  [2, 1, 2],
+  rleg_bot:  [2, 2, 2],
+  lleg_top:  [2, 1, 2],
+  lleg_bot:  [2, 2, 2],
 };
 
 // ─── Mojang API helpers ───────────────────────────────────────────────────────
@@ -500,6 +500,7 @@ async function generateCharacterParts(username) {
       textureValue,
       scaleX: SCALE[partName][0],
       scaleY: SCALE[partName][1],
+      scaleZ: SCALE[partName][2],
     };
 
     console.log(`[done] ${partName}`);
