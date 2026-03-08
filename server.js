@@ -146,17 +146,22 @@ async function uploadToMineskin(imageBuffer, partName) {
     contentType: "image/png",
   });
 
-  const res = await axios.post("https://api.mineskin.org/v2/generate", form, {
-    headers: {
-      ...form.getHeaders(),
-      "User-Agent": "DiamondFireSkinServer/1.0",
-      "Authorization": `Bearer ${process.env.MINESKIN_API_KEY}`,
-    },
-    timeout: 30000,
-  });
-
-  if (!res.data?.skin?.texture?.value) {
-    throw new Error(`Mineskin upload failed for ${partName}: ${JSON.stringify(res.data)}`);
+  try {
+    const res = await axios.post("https://api.mineskin.org/v2/generate", form, {
+      headers: {
+        ...form.getHeaders(),
+        "User-Agent": "DiamondFireSkinServer/1.0",
+        "Authorization": `Bearer ${process.env.MINESKIN_API_KEY}`,
+      },
+      timeout: 30000,
+    });
+    if (!res.data?.skin?.texture?.value) {
+      throw new Error(`Mineskin upload failed for ${partName}: ${JSON.stringify(res.data)}`);
+    }
+    return res.data.skin.texture.value;
+  } catch (err) {
+    console.log(`Mineskin error body:`, JSON.stringify(err.response?.data));
+    throw err;
   }
 
   return res.data.skin.texture.value;
