@@ -8,6 +8,7 @@ const app = express();
 const cache = new NodeCache({ stdTTL: 3600 }); // cache results for 1 hour
 
 app.use(express.json());
+app.use(express.text());
 
 // ─── Skin layout constants ────────────────────────────────────────────────────
 // Each entry: { base: [x,y,w,h], overlay: [x,y,w,h] }
@@ -229,7 +230,13 @@ async function generateCharacterParts(username) {
 // Main endpoint — called by DiamondFire's Get Web Response block
 // POST /skin with body: {"username": "Notch"}
 app.post("/skin", async (req, res) => {
-  const { username } = req.body;
+  let username;
+try {
+  const parsed = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+  username = parsed.username;
+} catch (e) {
+  return res.status(400).json({ error: "Invalid request body" });
+}
 
   if (!username || typeof username !== "string") {
     return res.status(400).json({ error: "Missing username in request body" });
