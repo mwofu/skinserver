@@ -155,10 +155,10 @@ async function uploadToMineskin(imageBuffer, partName) {
       },
       timeout: 30000,
     });
-    if (!res.data?.skin?.texture?.value) {
+    if (!res.data?.skin?.texture?.data?.value) {
       throw new Error(`Mineskin upload failed for ${partName}: ${JSON.stringify(res.data)}`);
     }
-    return res.data.skin.texture.value;
+    return res.data.skin.texture.data.value;
   } catch (err) {
     console.log(`Mineskin error body:`, JSON.stringify(err.response?.data));
     throw err;
