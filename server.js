@@ -427,31 +427,23 @@ async function extractPart(skin, partName) {
     const overlayCoords = partDef.overlay[faceName];
     const [sx, sy] = partDef.faceScale[faceName];
 
-    // Get base face
+    // Base face — inner layer
     let baseFace = cropFace(skin, baseCoords);
     if (!baseFace) {
-      // Use a blank face if this face doesn't exist (e.g. cut faces in split parts)
       baseFace = new Jimp(8, 8, 0x00000000);
     } else {
       baseFace = scaleFace(baseFace, sx, sy);
     }
+    const [bpx, bpy] = HEAD_FACE_POSITIONS.base[faceName];
+    output.composite(baseFace, bpx, bpy);
 
-    // Get overlay face
+    // Overlay face — outer layer (transparent where no overlay exists)
     let overlayFace = cropFace(skin, overlayCoords);
     if (overlayFace) {
       overlayFace = scaleFace(overlayFace, sx, sy);
+      const [opx, opy] = HEAD_FACE_POSITIONS.overlay[faceName];
+      output.composite(overlayFace, opx, opy);
     }
-
-    // Composite overlay onto base
-    const combined = compositeFace(baseFace, overlayFace);
-
-    // Place onto output at the correct head skin position (base layer)
-    const [bpx, bpy] = HEAD_FACE_POSITIONS.base[faceName];
-    output.composite(combined, bpx, bpy);
-
-    // Also place onto overlay layer position (copy of same — outer layer already baked in)
-    const [opx, opy] = HEAD_FACE_POSITIONS.overlay[faceName];
-    output.composite(combined, opx, opy);
   }
 
   return output;
