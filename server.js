@@ -314,17 +314,17 @@ const SCALE = {
 // Offset info for reconstruction
 
 const OFFSETS = {
-  head:      [0,      1.5,   0],
-  torso_top: [0,      0.75,  0],
-  torso_bot: [0,      0.375, 0], // half height so center is at 0.375
-  rarm_top:  [0.375,  0.75,  0], // 0.25 torso half + 0.125 arm half = 0.375
-  rarm_bot:  [0.375,  0.375, 0],
-  larm_top:  [-0.375, 0.75,  0],
-  larm_bot:  [-0.375, 0.375, 0],
-  rleg_top:  [0.125,  0.375, 0],
-  rleg_bot:  [0.125,  0.1875,0],
-  lleg_top:  [-0.125, 0.375, 0],
-  lleg_bot:  [-0.125, 0.1875,0],
+  head:      [0,      1.8,   0],
+  torso_top: [0,      1.3,   0],
+  torso_bot: [0,      0.8,   0],
+  rarm_top:  [0.375,  1.3,   0],
+  rarm_bot:  [0.375,  0.8,   0],
+  larm_top:  [-0.375, 1.3,   0],
+  larm_bot:  [-0.375, 0.8,   0],
+  rleg_top:  [0.125,  0.75,  0],
+  rleg_bot:  [0.125,  0.25,  0],
+  lleg_top:  [-0.125, 0.75,  0],
+  lleg_bot:  [-0.125, 0.25,  0],
 };
 
 // ─── Mojang API helpers ───────────────────────────────────────────────────────
